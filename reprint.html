@@ -1,0 +1,229 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<script src="jquery.min.js"></script>
+		<style>
+		<!--
+		
+		body {
+			background: url(bg.jpg) no-repeat;
+			background-size: 100% 100%;
+			position: relative;
+			text-align: center;
+			font-size: 2em;
+			height: calc(100vh - 27px);
+			margin: 0px;
+			padding: 0px;
+			box-sizing: border-box;
+			padding-top: 6.53%;
+		}
+		
+		h1 {
+			font-size: 1.72em;
+		}
+		
+		#eventHeading {
+			/*margin-top: 72px;*/
+			color: #ff2121;
+			margin: 0px auto;
+		}
+
+		.error {
+			color: red !important;
+		}
+		
+		#eventSubHeading {
+			margin-top: 0px;
+			color: #53aa53;
+			font-size: 1.72em;
+			margin-bottom: 30px;
+		}
+
+        #savedMsg {
+            color: #53aa53;
+        }
+
+        #statusHeading {
+            font-size: 1.21em;
+            color: #5353aa;
+        }
+		
+		#counter input {
+			font-size: 1.23em;
+			margin-top: 0px;
+			text-align: center;
+		}
+		
+		#decreaseCount {
+			width: 50vw;
+			height: 100vh;
+			position: fixed;
+			left: 0px;
+			top: 0px;
+			cursor: pointer;
+			z-index: 99999999;
+		}
+		
+		#increaseCount {
+			width: 50vw;
+			height: 100vh;
+			position: fixed;
+			right: 0px;
+			top: 0px;
+			cursor: pointer;
+			z-index: 99999999;
+		}
+
+            /* Chrome, Safari, Edge, Opera */
+            input::-webkit-outer-spin-button,
+            input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            /* Firefox */
+            input[type=number] {
+                -moz-appearance: textfield;
+            }
+
+
+		@media all and (max-width: 1365px) {
+			body {
+				font-size: 1em;
+				min-height: 320px;
+			}
+		}
+
+        @media print {
+            body * {
+                display: none;
+            }
+
+            body {
+                margin: 0px;
+                padding: 0px;
+                background: none;
+            }
+
+            body .sticker {
+                display: block;
+            }
+
+                body .sticker * {
+                    display: block;
+                }
+        }
+
+            .sticker {
+                width: 3in;
+                height: 2in;
+                border: 5px solid #000;
+                font-size: 18px;
+                text-align: center;
+                position: relative;
+                padding: 5px;
+                box-sizing: border-box;
+                overflow: hidden;
+                font-weight: bold;
+                margin: 10px auto;
+            }
+
+                .sticker .runner_Name,
+                .sticker .runner_Size {
+                    font-size: 1.4em;
+                }
+
+            .runner_ITSID {
+                margin: 5px auto;
+                border-top: 1px dotted;
+                border-bottom: 1px dotted;
+                padding: 5px 0px;
+				font-size: 24px;
+            }
+		
+		-->
+		</style>
+		
+		<script type="text/javascript">
+		
+			$(function() {
+				//var subhead = prompt("Please enter event sub heading");
+				//var outof = prompt("Please enter maximum available passes");
+				
+				//$("#eventSubHeading").html(subhead);
+				//$("#outof").html(outof);
+				
+				//$(document).on("keyup", function(e) {
+				//	if (e.which == 13) {
+				//		onClick_Count("i");
+				//	}
+				//	if (e.which == 68) {
+				//		onClick_Count("d");
+				//	}
+				//});
+				
+				$('#itsID').keypress(function (e) {
+					var key = e.which;
+					if(key == 13){
+						onSave_ITSID();  
+					}
+				});
+				
+				$("#itsID").on("input paste", function (e) {
+					
+					oldVal = $(e.target).val();
+					$(e.target).val(oldVal.replace(/[^0-9]/gi, ""));
+
+                    if ($(e.target).val().length > 8) {
+                        $(e.target).val($(e.target).val().substring(0, 8));
+                    }
+				});
+			});
+			
+			function onSave_ITSID() {
+				$("#savedMsg").removeClass("error");
+				if ($("#itsID").val() == "" || $("#itsID").val().length < 8) {
+					$("#savedMsg").text("Please provide a valid ITS ID").addClass("error");
+					return;
+                }
+                $.post("./reprintITS", { itsid: $("#itsID").val() }, function (data) {
+                    var stickerData = JSON.parse(data.message);
+                    $(".runner_Name").html(stickerData.FullName.substring(0, 52));
+                    $(".runner_ITSID").html(stickerData.Mumin_ID);
+                    $(".runner_Size").html(stickerData.Gate);
+					$("#savedMsg").text("Successfully saved: " + $("#itsID").val());
+                    $("#itsID").val("").focus();
+                    window.print();
+                }).fail(function (xhr, status, error) {
+                    //console.log(xhr.responseJSON);
+                    $("#savedMsg").text($("#itsID").val() + " - " + xhr.responseJSON.message).addClass("error");
+				});
+			}
+		
+		</script>
+		
+	</head>
+	<body>
+	
+		<h1 id="eventHeading">MARATHON 3.0 - 2022 - Reprint</h1>
+		<!-- <h3 id="eventSubHeading">Qadambosi Bethak - 01</h3> -->
+		
+        <div class="sticker">
+            <div class="runner_Name"></div>
+            <div class="runner_ITSID"></div>
+            <div class="runner_Size"></div>
+        </div>
+		
+		<div id="counter">
+			<div id="savedMsg"></div>
+			<input type="number" id="itsID" max="99999999" min="11111111" style="margin-bottom: 10px;" />
+			<br />
+			<input type="button" value="Save & Print" onclick="onSave_ITSID()" />
+		</div>		
+		
+		<!-- <div id="decreaseCount" onclick="onClick_Count('d')"></div> -->
+		<!-- <div id="increaseCount" onclick="onClick_Count('i')"></div> -->
+		
+	
+	</body>
+</html>

@@ -1,0 +1,17 @@
+Prerequisites:
+Install "node-v16.13.1-x64.msi" included in this archive
+
+To run application:
+1. execute file "runapp.bat" to start the app
+2. Goto browser
+3. For count open url "http://localhost:5000" or "http://your-ip:5000"
+4. To scan open url "http://localhost:5000/scan" or "http://your-ip:5000/scan"
+
+Additional information:
+"registered.csv" contains the data for registered mumin
+"scanned.csv" contains the ITS ID of mumin already scanned even unregistered
+
+Before starting scan:
+1. Open "scanned.csv" and remove all ITS IDs
+2. Only keep the text "Scanned" in the first line of the file
+3. Remove all additional empty spaces and lines after the word "Scanned"

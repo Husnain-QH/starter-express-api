@@ -1,0 +1,154 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<script src="jquery.min.js"></script>
+		<style>
+		<!--
+		
+		body {
+			background: url(bg.jpg) no-repeat;
+			background-size: 100% 100%;
+			position: relative;
+			text-align: center;
+			font-size: 2em;
+			height: calc(100vh - 27px);
+			margin: 0px;
+			padding: 0px;
+			box-sizing: border-box;
+			padding-top: 5.53%;
+		}
+		
+		h1 {
+			font-size: 2.1em;
+		}
+		
+		#eventHeading {
+			/*margin-top: 72px;*/
+			color: #ff2121;
+			margin-bottom: 0px;
+		}
+		
+		#eventSubHeading {
+			margin-top: 0px;
+			color: #53aa53;
+			font-size: 1.72em;
+			margin-bottom: 30px;
+		}
+
+        #statusHeading {
+            font-size: 1.21em;
+            color: #5353aa;
+            margin: 20px auto;
+        }
+		
+		#counter {
+			font-size: 7em;
+			margin-top: 0px;
+		}
+		
+		#decreaseCount {
+			width: 50vw;
+			height: 100vh;
+			position: fixed;
+			left: 0px;
+			top: 0px;
+			cursor: pointer;
+			z-index: 99999999;
+		}
+		
+		#increaseCount {
+			width: 50vw;
+			height: 100vh;
+			position: fixed;
+			right: 0px;
+			top: 0px;
+			cursor: pointer;
+			z-index: 99999999;
+		}
+		
+		-->
+		</style>
+		
+		<script type="text/javascript">
+		
+			$(function() {
+				//var subhead = prompt("Please enter event sub heading");
+				//var outof = prompt("Please enter maximum available passes");
+				
+				//$("#eventSubHeading").html(subhead);
+				//$("#outof").html(outof);
+				
+				$(document).on("keyup", function(e) {
+					if (e.which == 13) {
+						//onClick_Count("i");
+					}
+					if (e.which == 68) {
+						//onClick_Count("d");
+					}
+				});
+			});
+			
+			var autofetcher = setTimeout(function() {
+				getCounts();
+			}, 1053);
+			
+			function getCounts() {
+				
+				$.post("./getCount", function (data) {
+                    $("#count").text(data.scanned);
+				})
+					.done(function (msg) {
+                        clearTimeout(autofetcher);
+                        autofetcher = setTimeout(function () {
+                            getCounts();
+                        }, 1053);
+					})
+					.fail(function (xhr, status, error) {
+                        clearTimeout(autofetcher);
+                        autofetcher = setTimeout(function () {
+                            getCounts();
+                        }, 1053);
+					});
+		}
+			
+			//function onClick_Count(c) {
+			//	
+			//	var cnt = Math.abs($("#count").text().trim());
+			//	var max = Math.abs($("#outof").text().trim());
+			//	
+			//	if (c == "i") {
+			//		if (cnt < max) {
+			//			cnt += 1;
+			//			$("#count").text(cnt);
+			//		}
+			//	}
+			//	
+			//	if (c == "d") {
+			//		if (cnt > 0) {
+			//			cnt -= 1;
+			//			$("#count").text(cnt);
+			//		}
+			//	}
+			//	
+			//	
+			//}
+		
+		</script>
+		
+	</head>
+	<body>
+	
+		<h1 id="eventHeading">Asbaaq 1444H - 2022</h1>
+		<h3 id="eventSubHeading">Mumeneen Scanned</h3>
+		
+		<!--<h2 id="statusHeading">Current Status</h2>-->
+		
+		<h1 id="counter"><span id="count">0</span> <!--/ <span id="outof">3200</span>--></h1>
+		
+		
+		<!-- <div id="decreaseCount" onclick="onClick_Count('d')"></div> -->
+		<!-- <div id="increaseCount" onclick="onClick_Count('i')"></div> -->
+		
+	
+	</body>
+</html>
